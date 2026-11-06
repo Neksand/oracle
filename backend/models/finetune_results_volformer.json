@@ -1,0 +1,187 @@
+{
+  "timestamp": "2026-10-23T13:48:02.851289+00:00",
+  "config": {
+    "lstm": {
+      "window": 30,
+      "channels": 10,
+      "hidden": 48,
+      "num_layers": 1,
+      "dropout": 0.1,
+      "head_hidden": 24
+    },
+    "volformer": {
+      "window": 30,
+      "channels": 10,
+      "d_model": 32,
+      "nhead": 4,
+      "num_layers": 2,
+      "dim_feedforward": 64,
+      "dropout": 0.1
+    },
+    "training": {
+      "batch_size": 256,
+      "val_split": 0.2,
+      "encoder_lr": 1e-05,
+      "head_lr": 0.001,
+      "weight_decay": 0.0001,
+      "finetune_epochs": 50,
+      "finetune_patience": 5
+    }
+  },
+  "model_type": "volformer",
+  "pretrained_checkpoint": null,
+  "results": [
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "BTCUSDT",
+      "target_estimator": "rv",
+      "seed": 7,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 2.1457672119140625e-06,
+      "best_epoch": 9,
+      "test_metrics": {
+        "loss": 2.1457672119140625e-06,
+        "rmse": 2.2904714569449425e-06,
+        "mae": 2.2904714569449425e-06,
+        "qlike": 902.9854736328125
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_BTCUSDT_rv_random_init_seed7.pth",
+      "duration_sec": 2.459958791732788
+    },
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "BTCUSDT",
+      "target_estimator": "rv",
+      "seed": 42,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 0.0001628398895263672,
+      "best_epoch": 4,
+      "test_metrics": {
+        "loss": 0.0001628398895263672,
+        "rmse": 1.965929004654754e-05,
+        "mae": 1.9659288227558136e-05,
+        "qlike": 874.389404296875
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_BTCUSDT_rv_random_init_seed42.pth",
+      "duration_sec": 1.2954118251800537
+    },
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "BTCUSDT",
+      "target_estimator": "tsrv",
+      "seed": 7,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 2.1457672119140625e-06,
+      "best_epoch": 9,
+      "test_metrics": {
+        "loss": 2.1457672119140625e-06,
+        "rmse": 2.2904714569449425e-06,
+        "mae": 2.2904714569449425e-06,
+        "qlike": 902.9854736328125
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_BTCUSDT_tsrv_random_init_seed7.pth",
+      "duration_sec": 1.9621150493621826
+    },
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "BTCUSDT",
+      "target_estimator": "tsrv",
+      "seed": 42,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 0.0001628398895263672,
+      "best_epoch": 4,
+      "test_metrics": {
+        "loss": 0.0001628398895263672,
+        "rmse": 1.965929004654754e-05,
+        "mae": 1.9659288227558136e-05,
+        "qlike": 874.389404296875
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_BTCUSDT_tsrv_random_init_seed42.pth",
+      "duration_sec": 1.3519330024719238
+    },
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "ETHUSDT",
+      "target_estimator": "rv",
+      "seed": 7,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 2.384185791015625e-06,
+      "best_epoch": 9,
+      "test_metrics": {
+        "loss": 2.384185791015625e-06,
+        "rmse": 4.634028300642967e-06,
+        "mae": 4.634028300642967e-06,
+        "qlike": 443.2621765136719
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_ETHUSDT_rv_random_init_seed7.pth",
+      "duration_sec": 1.9563579559326172
+    },
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "ETHUSDT",
+      "target_estimator": "rv",
+      "seed": 42,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 0.00016307830810546875,
+      "best_epoch": 4,
+      "test_metrics": {
+        "loss": 0.00016307830810546875,
+        "rmse": 3.9773523894837126e-05,
+        "mae": 3.977352753281593e-05,
+        "qlike": 428.9624328613281
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_ETHUSDT_rv_random_init_seed42.pth",
+      "duration_sec": 1.3035938739776611
+    },
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "ETHUSDT",
+      "target_estimator": "tsrv",
+      "seed": 7,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 2.384185791015625e-06,
+      "best_epoch": 9,
+      "test_metrics": {
+        "loss": 2.384185791015625e-06,
+        "rmse": 4.634028300642967e-06,
+        "mae": 4.634028300642967e-06,
+        "qlike": 443.2621765136719
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_ETHUSDT_tsrv_random_init_seed7.pth",
+      "duration_sec": 2.124906063079834
+    },
+    {
+      "strategy": "random_init",
+      "model_type": "volformer",
+      "symbol": "ETHUSDT",
+      "target_estimator": "tsrv",
+      "seed": 42,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 0.00016307830810546875,
+      "best_epoch": 4,
+      "test_metrics": {
+        "loss": 0.00016307830810546875,
+        "rmse": 3.9773523894837126e-05,
+        "mae": 3.977352753281593e-05,
+        "qlike": 428.9624328613281
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/volformer_ETHUSDT_tsrv_random_init_seed42.pth",
+      "duration_sec": 1.2972049713134766
+    }
+  ]
+}

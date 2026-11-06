@@ -1,0 +1,39 @@
+# ORACLE Research Dependencies
+# Core ML/DL
+torch==2.4.0
+torchvision==0.19.0
+torchaudio==2.4.0
+mamba-ssm==2.2.2
+causal-conv1d==1.4.0
+einops==0.8.0
+diffusers==0.30.0
+accelerate==0.30.0
+transformers==4.41.0
+
+# Financial Econometrics
+arch==6.2.0
+yfinance==0.2.40
+
+# Optimization & Experiment Tracking
+wandb==0.17.0
+optuna==3.5.0
+
+# Scientific Computing
+scipy==1.13.0
+numpy==1.26.4
+pandas==2.2.0
+matplotlib==3.8.0
+seaborn==0.13.0
+statsmodels==0.14.0
+scikit-learn==1.5.0
+
+# Utilities
+tqdm==4.66.0
+joblib==1.4.0
+pytest==8.2.0
+pytest-cov==5.0.0
+
+# Jupyter for simulation notebooks
+jupyter==1.0.0
+nbconvert==7.16.0
+ipykernel==6.29.0

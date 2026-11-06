@@ -1,0 +1,15 @@
+# Render Blueprint: one free Docker web service for the FastAPI backend.
+# Deploy: https://render.com/deploy?repo=https://github.com/Neksand/oracle
+services:
+  - type: web
+    name: oracle-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://neksand.github.io,http://localhost:5173

@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-10-23T13:55:22.384063+00:00",
+  "config": {
+    "lstm": {
+      "window": 30,
+      "channels": 10,
+      "hidden": 48,
+      "num_layers": 1,
+      "dropout": 0.1,
+      "head_hidden": 24
+    },
+    "volformer": {
+      "window": 30,
+      "channels": 10,
+      "d_model": 32,
+      "nhead": 4,
+      "num_layers": 2,
+      "dim_feedforward": 64,
+      "dropout": 0.1
+    },
+    "training": {
+      "batch_size": 256,
+      "val_split": 0.2,
+      "encoder_lr": 1e-05,
+      "head_lr": 0.001,
+      "weight_decay": 0.0001,
+      "finetune_epochs": 50,
+      "finetune_patience": 5
+    }
+  },
+  "model_type": "lstm",
+  "pretrained_checkpoint": "models/spy_daily_pretrained.pth",
+  "results": [
+    {
+      "strategy": "random_init",
+      "model_type": "lstm",
+      "symbol": "BTCUSDT",
+      "target_estimator": "rv",
+      "seed": 7,
+      "trainable_params": 12721,
+      "total_params": 12721,
+      "best_val_loss": 4.76837158203125e-07,
+      "best_epoch": 20,
+      "test_metrics": {
+        "loss": 4.76837158203125e-07,
+        "rmse": 1.1639203876256943e-06,
+        "mae": 1.1639203876256943e-06,
+        "qlike": 904.8876342773438
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/lstm_BTCUSDT_rv_random_init_seed7.pth",
+      "duration_sec": 1.737741231918335
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+# deps / build output
+node_modules/
+frontend/dist/
+
+# python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# local databases & secrets
+*.db
+*.db-shm
+*.db-wal
+.ngrok_token
+.env
+
+# os / editor noise
+.DS_Store

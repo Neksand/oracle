@@ -1,0 +1,9 @@
+{
+  "total_return": -0.5214792729743,
+  "sharpe": -16.680587508887854,
+  "max_dd": 0.5214792729743001,
+  "win_rate": 0.20040080160320642,
+  "n_trades": 253,
+  "n_steps": 500,
+  "method": "realistic_option_backtest_with_black_scholes"
+}

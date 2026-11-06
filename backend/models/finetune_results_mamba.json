@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-10-23T14:23:00.638738+00:00",
+  "config": {
+    "lstm": {
+      "window": 30,
+      "channels": 10,
+      "hidden": 48,
+      "num_layers": 1,
+      "dropout": 0.1,
+      "head_hidden": 24
+    },
+    "volformer": {
+      "window": 30,
+      "channels": 10,
+      "d_model": 32,
+      "nhead": 4,
+      "num_layers": 2,
+      "dim_feedforward": 64,
+      "dropout": 0.1
+    },
+    "mamba": {
+      "window": 30,
+      "channels": 10,
+      "d_model": 32,
+      "n_layers": 1,
+      "expand": 2
+    },
+    "training": {
+      "batch_size": 256,
+      "val_split": 0.2,
+      "encoder_lr": 1e-05,
+      "head_lr": 0.001,
+      "weight_decay": 0.0001,
+      "finetune_epochs": 50,
+      "finetune_patience": 5
+    }
+  },
+  "model_type": "mamba",
+  "pretrained_checkpoint": null,
+  "results": [
+    {
+      "strategy": "random_init",
+      "model_type": "mamba",
+      "symbol": "BTCUSDT",
+      "target_estimator": "rv",
+      "seed": 7,
+      "trainable_params": 19217,
+      "total_params": 19217,
+      "best_val_loss": 2.1457672119140625e-06,
+      "best_epoch": 9,
+      "test_metrics": {
+        "loss": 2.1457672119140625e-06,
+        "rmse": 2.2904714569449425e-06,
+        "mae": 2.2904714569449425e-06,
+        "qlike": 902.9854736328125
+      },
+      "model_path": "/Users/neksand/Documents/oracle/backend/models/mamba_BTCUSDT_rv_random_init_seed7.pth",
+      "duration_sec": 2.563777208328247
+    }
+  ]
+}
