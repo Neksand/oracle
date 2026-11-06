@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Activity, Loader2, LockKeyhole, Mail, UserRound, ArrowRight, ShieldCheck } from 'lucide-react';
-import { apiErrorMessage, login, register } from '../../api/simulationApi';
+import { apiErrorMessage, login, register, fetchHealth } from '../../api/simulationApi';
 
 type Mode = 'login' | 'register';
 
@@ -13,6 +13,13 @@ interface Props {
  * Login is throttled server-side (3 failed attempts -> 5 minute lock).
  */
 export const AuthGate: React.FC<Props> = ({ onAuthenticated }) => {
+  // Free-tier backends sleep after ~15 min idle and need ~40 s to wake up.
+  // Kick off a request as soon as the page loads so the instance boots while
+  // the visitor is still typing their credentials.
+  useEffect(() => {
+    void fetchHealth();
+  }, []);
+
   const [mode, setMode] = useState<Mode>('login');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');

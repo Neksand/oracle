@@ -7,7 +7,8 @@ Frontend on GitHub Pages, backend (FastAPI) on Render.
 
 ## Demo login
 
-`alice` / `Alice#Oracle26` (seeded automatically on first boot).
+`admin` / `Admin#Oracle26` (role: admin) or `alice` / `Alice#Oracle26` (role: user).
+Both are seeded automatically on first boot.
 
 ## Local run
 

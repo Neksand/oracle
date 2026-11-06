@@ -41,7 +41,7 @@ export async function runFinanceSimulation(params: FinanceParams, seed?: number 
     };
     const response = await axios.post<FinanceResponse>(
       `${API_BASE_URL}/finance/simulate`, payload,
-      { headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, timeout: 30000 },
+      { headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, timeout: 60000 },
     );
     return response.data;
   } catch (error) {
@@ -68,7 +68,7 @@ export async function runPortfolioSimulation(params: PortfolioParams, seed?: num
     };
     const response = await axios.post<FinanceResponse>(
       `${API_BASE_URL}/finance/portfolio`, payload,
-      { headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, timeout: 30000 },
+      { headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, timeout: 60000 },
     );
     return response.data;
   } catch (error) {
@@ -83,7 +83,7 @@ export async function runPortfolioSimulation(params: PortfolioParams, seed?: num
 export async function fetchHealth(): Promise<{ online: boolean; system?: string }> {
   try {
     const base = API_BASE_URL.replace(/\/api$/, '');
-    const r = await axios.get<{ status: string; system: string }>(`${base}/health`, { timeout: 5000 });
+    const r = await axios.get<{ status: string; system: string }>(`${base}/health`, { timeout: 60000 });
     return { online: r.data?.status === 'online', system: r.data?.system };
   } catch {
     return { online: false };
@@ -91,22 +91,22 @@ export async function fetchHealth(): Promise<{ online: boolean; system?: string 
 }
 
 export async function fetchQuote(symbol: string): Promise<MarketQuote> {
-  const r = await axios.get<MarketQuote>(`${API_BASE_URL}/market/quote`, { params: { symbol }, timeout: 12000 });
+  const r = await axios.get<MarketQuote>(`${API_BASE_URL}/market/quote`, { params: { symbol }, timeout: 60000 });
   return r.data;
 }
 
 export async function fetchHistory(symbol: string, range = '1Y'): Promise<{ closes: number[]; source: string; symbol: string }> {
-  const r = await axios.get(`${API_BASE_URL}/market/history`, { params: { symbol, range }, timeout: 15000 });
+  const r = await axios.get(`${API_BASE_URL}/market/history`, { params: { symbol, range }, timeout: 60000 });
   return r.data;
 }
 
 export async function calibrateMarket(symbol: string): Promise<{ s0: number; mu_ann: number; sigma_ann: number; source: string; n_obs: number }> {
-  const r = await axios.post(`${API_BASE_URL}/market/calibrate`, { symbol }, { timeout: 15000 });
+  const r = await axios.post(`${API_BASE_URL}/market/calibrate`, { symbol }, { timeout: 60000 });
   return r.data;
 }
 
 export async function fetchPresets(): Promise<MarketPreset[]> {
-  const r = await axios.get<MarketPreset[]>(`${API_BASE_URL}/market/presets`, { timeout: 10000 });
+  const r = await axios.get<MarketPreset[]>(`${API_BASE_URL}/market/presets`, { timeout: 60000 });
   return r.data;
 }
 
@@ -170,13 +170,13 @@ export interface RiskJoinRow {
 export async function dbLookupScenarios(username = 'alice'):
   Promise<{ query: string; count: number; scenarios: ScenarioLookupRow[] }> {
   const r = await axios.get(`${API_BASE_URL}/db/scenarios/lookup`,
-    { params: { username }, headers: authHeaders(), timeout: 10000 });
+    { params: { username }, headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
 export async function dbRiskJoin(): Promise<{ query: string; rows: RiskJoinRow[] }> {
   const r = await axios.get(`${API_BASE_URL}/db/scenarios/risk-join`,
-    { headers: authHeaders(), timeout: 10000 });
+    { headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
@@ -187,7 +187,7 @@ export interface SavedScenario {
 
 export async function dbMyScenarios(): Promise<SavedScenario[]> {
   const r = await axios.get(`${API_BASE_URL}/db/scenarios`,
-    { headers: authHeaders(), timeout: 10000 });
+    { headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
@@ -198,7 +198,7 @@ export async function login(username: string, password: string): Promise<AuthRes
   form.append('username', username);
   form.append('password', password);
   const r = await axios.post(`${API_BASE_URL}/auth/login`, form,
-    { headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, timeout: 10000 });
+    { headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, timeout: 60000 });
   setAuthToken(r.data.access_token);
   localStorage.setItem('oracle_user', r.data.username ?? username);
   return r.data;
@@ -206,14 +206,14 @@ export async function login(username: string, password: string): Promise<AuthRes
 
 export async function register(username: string, email: string, password: string): Promise<AuthResult> {
   const r = await axios.post(`${API_BASE_URL}/auth/register`,
-    { username, email, password }, { timeout: 15000 });
+    { username, email, password }, { timeout: 60000 });
   setAuthToken(r.data.access_token);
   localStorage.setItem('oracle_user', r.data.username ?? username);
   return r.data;
 }
 
 export async function me(): Promise<{ username: string; email: string; role: string }> {
-  const r = await axios.get(`${API_BASE_URL}/auth/me`, { headers: authHeaders(), timeout: 8000 });
+  const r = await axios.get(`${API_BASE_URL}/auth/me`, { headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
@@ -235,17 +235,17 @@ export interface ApiKeyInfo {
 }
 
 export async function listApiKeys(): Promise<ApiKeyInfo[]> {
-  const r = await axios.get(`${API_BASE_URL}/keys`, { headers: authHeaders(), timeout: 10000 });
+  const r = await axios.get(`${API_BASE_URL}/keys`, { headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
 export async function createApiKey(name: string): Promise<{ id: number; name: string; prefix: string; api_key: string; note: string }> {
-  const r = await axios.post(`${API_BASE_URL}/keys`, { name }, { headers: authHeaders(), timeout: 10000 });
+  const r = await axios.post(`${API_BASE_URL}/keys`, { name }, { headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
 export async function revokeApiKey(id: number): Promise<void> {
-  await axios.delete(`${API_BASE_URL}/keys/${id}`, { headers: authHeaders(), timeout: 10000 });
+  await axios.delete(`${API_BASE_URL}/keys/${id}`, { headers: authHeaders(), timeout: 60000 });
 }
 
 export function apiErrorMessage(e: unknown): string {
@@ -256,6 +256,9 @@ export function apiErrorMessage(e: unknown): string {
       return (detail[0] as { msg: string }).msg;
     }
     if (e.response?.status === 429) return 'Too many attempts. Please wait and try again.';
+    if (e.code === 'ECONNABORTED' || !e.response) {
+      return 'Backend is waking up (free tier, up to ~40s). Wait a moment and press Sign in again.';
+    }
   }
   return e instanceof Error ? e.message : String(e);
 }
@@ -273,7 +276,7 @@ export interface InjectionResult {
 
 export async function runInjectionDemo(userInput: string): Promise<InjectionResult> {
   const r = await axios.post(`${API_BASE_URL}/security/sql_injection_demo`,
-    { user_input: userInput }, { headers: authHeaders(), timeout: 10000 });
+    { user_input: userInput }, { headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
@@ -283,7 +286,7 @@ export interface AuditEntry {
 
 export async function fetchAuditLog(limit = 15): Promise<AuditEntry[]> {
   const r = await axios.get(`${API_BASE_URL}/security/audit_log`,
-    { params: { limit }, headers: authHeaders(), timeout: 10000 });
+    { params: { limit }, headers: authHeaders(), timeout: 60000 });
   return r.data;
 }
 
@@ -306,14 +309,14 @@ export interface BenchmarkResponse {
 
 export async function runBenchmark(symbol = 'SPY', useLstm = true): Promise<BenchmarkResponse> {
   const r = await axios.post(`${API_BASE_URL}/research/benchmark`,
-    { symbol, lookback_days: 750, use_lstm: useLstm }, { headers: authHeaders(), timeout: 120000 });
+    { symbol, lookback_days: 750, use_lstm: useLstm }, { headers: authHeaders(), timeout: 180000 });
   return r.data;
 }
 
 /** Download the .sql dump produced server-side (appendix for the report). */
 export async function exportSqlDump(): Promise<void> {
   const r = await axios.post(`${API_BASE_URL}/db/export`, null,
-    { headers: authHeaders(), timeout: 30000 });
+    { headers: authHeaders(), timeout: 60000 });
   const blob = new Blob([r.data.sql], { type: 'application/sql;charset=utf-8;' });
   triggerDownload(blob, r.data.filename || 'oracle_dump.sql');
 }
