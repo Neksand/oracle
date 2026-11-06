@@ -3,7 +3,7 @@
 Frontend on GitHub Pages, backend (FastAPI) on Render.
 
 - **App:** https://neksand.github.io/oracle/
-- **API:** https://oracle-api.onrender.com/docs
+- **API:** https://oracle-api-rvuq.onrender.com/docs
 
 ## Demo login
 
@@ -29,9 +29,11 @@ Vite proxies `/api` and `/health` to `127.0.0.1:8000`, so no env vars are needed
    https://render.com/deploy?repo=https://github.com/Neksand/oracle
    The free plan sleeps after 15 min idle; the first request after that takes ~30 s.
 
-If Render assigns a URL different from `https://oracle-api.onrender.com`, set the repository
-variable `VITE_API_BASE_URL` (Settings → Secrets and variables → Actions → Variables, value
-`https://<your-service>.onrender.com/api`) and re-run the Pages workflow.
+The Render service is `oracle-api-rvuq` (the plain `oracle-api` subdomain was already taken).
+Its URL is set as the repository variable `VITE_API_BASE_URL`
+(Settings → Secrets and variables → Actions → Variables); the Pages workflow bakes it into
+the build, so changing the backend URL only requires updating that variable and re-running
+the workflow.
 
 ## Notes
 
