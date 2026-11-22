@@ -16,6 +16,10 @@ All inputs are built from daily close-to-close log returns, so this is a
 deliberately reduced demo: no OHLC range, Parkinson, Garman-Klass or VIX
 inputs.  Absolute QLIKE is therefore not comparable to the full HAR-X
 benchmark in app/research/pipeline.py.
+
+If torch is missing (or training raises) the run degrades to the 19-parameter
+m3 calendar-HAR backbone and reports fallback=True, params=19 and a fallback
+model name -- it must never claim the 100-parameter GRU model.
 """
 from __future__ import annotations
 
@@ -297,19 +301,46 @@ def run_microvol(symbol: str, lookback_days: int = 750) -> Dict[str, Any]:
     next_var = float(np.clip(next_var, 1e-12, 1e6))
     next_vol = math.sqrt(next_var)
 
+    # 24/7 crypto trades every calendar day; equities only weekdays. The paper
+    # annualises crypto with 365, so expose the exact factor used.
+    annualization = 365 if crypto else 252
+    fallback = not var_preds
+
+    if fallback:
+        # Only the linear m3 calendar-HAR coefficients exist; no sequence
+        # parameters were trained, so never advertise the 100-param model card.
+        model_name = "m3 calendar-HAR (fallback)"
+        params: Any = M3_PARAMS
+        params_breakdown = {"m3_backbone": M3_PARAMS, "sequence": 0}
+        note = (
+            "Fallback run: the sequence residual was not trained "
+            f"({torch_error}). Metrics are the 19-parameter m3 calendar-HAR "
+            "backbone only, on a close-only demo target."
+        )
+    else:
+        model_name = "MicroVol-100 (m3 calendar-HAR + 2-unit GRU residual)"
+        params = 100
+        params_breakdown = {"m3_backbone": M3_PARAMS, "gru_recurrent": 78, "residual_head": 3}
+        note = (
+            "Close-only demo variant: features are daily close-to-close returns "
+            "only (no OHLC range, Parkinson, Garman-Klass or VIX), so absolute "
+            "QLIKE is not comparable to the full HAR-X benchmark."
+        )
+
     return {
         "symbol": series.symbol,
         "source": series.source,
         "n_obs": int(len(r)),
         "lookback_days": int(lookback_days),
-        "model": "MicroVol-100 (m3 calendar-HAR + 2-unit GRU residual)",
-        "params": 100,
-        "params_breakdown": {"m3_backbone": 19, "gru_recurrent": 78, "residual_head": 3},
+        "model": model_name,
+        "params": params,
+        "params_breakdown": params_breakdown,
+        "fallback": fallback,
         "hidden_units": HIDDEN,
         "sequence_length": SEQ_LEN,
         "seeds": list(SEEDS),
         "split": {
-            "scheme": "70/10/20 chronological",
+            "scheme": "70/10/20 chronological (demo split != paper split)",
             "train": int(len(tr)),
             "validation": int(len(va)),
             "test": int(len(te)),
@@ -317,23 +348,22 @@ def run_microvol(symbol: str, lookback_days: int = 750) -> Dict[str, Any]:
         "qlike_model": round(qlike_model, 6),
         "qlike_har": round(qlike_har, 6),
         "qlike_m3": round(qlike_m3, 6),
+        # Paper convention: gap = QLIKE(model) - QLIKE(HAR); negative = better.
+        "qlike_gap": round(qlike_model - qlike_har, 6),
         "train_seconds": round(train_seconds, 3),
         "total_seconds": round(time.perf_counter() - started, 2),
         "torch_available": bool(_TORCH_OK and not torch_error),
         "torch_error": torch_error,
+        "annualization": annualization,
         "forecast": {
             "horizon_days": 1,
             "variance_daily": next_var,
             "vol_daily": next_vol,
-            "variance_annualized": next_var * 252.0,
-            "vol_annualized": next_vol * math.sqrt(252.0),
+            "variance_annualized": next_var * annualization,
+            "vol_annualized": next_vol * math.sqrt(annualization),
             "last_close": float(closes[-1]),
         },
-        "note": (
-            "Close-only demo variant: features are daily close-to-close returns "
-            "only (no OHLC range, Parkinson, Garman-Klass or VIX), so absolute "
-            "QLIKE is not comparable to the full HAR-X benchmark."
-        ),
+        "note": note,
     }
 
 
@@ -341,13 +371,20 @@ if __name__ == "__main__":
     out = run_microvol("SPY", 750)
     assert math.isfinite(out["qlike_model"]), out["qlike_model"]
     assert math.isfinite(out["qlike_har"]), out["qlike_har"]
-    assert out["params"] == 100
     assert math.isfinite(out["train_seconds"])
     assert math.isfinite(out["forecast"]["variance_daily"])
     assert out["forecast"]["variance_daily"] > 0
     assert math.isfinite(out["forecast"]["vol_annualized"])
+    assert out["annualization"] == 252
+    assert out["qlike_gap"] == round(out["qlike_model"] - out["qlike_har"], 6)
+    if out["fallback"]:
+        assert out["params"] == M3_PARAMS
+        assert "fallback" in out["model"]
+    else:
+        assert out["params"] == 100
     print(
         f"SPY qlike_model={out['qlike_model']:.6f} qlike_har={out['qlike_har']:.6f} "
-        f"params={out['params']} train={out['train_seconds']:.3f}s "
+        f"gap={out['qlike_gap']:+.6f} params={out['params']} fallback={out['fallback']} "
+        f"train={out['train_seconds']:.3f}s "
         f"vol_ann={out['forecast']['vol_annualized']:.4f} torch={out['torch_available']}"
     )

@@ -347,11 +347,20 @@ export interface MicroVolResponse {
   symbol: string;
   source: string;
   n_obs: number;
-  params: number | { count?: number };
+  /** 19 on a HAR-only fallback run; 100 only when the GRU actually trained. */
+  params: number | null | { count?: number };
+  params_breakdown?: Record<string, number>;
+  /** True when torch was unavailable or training failed; only the linear backbone ran. */
+  fallback?: boolean;
+  torch_available?: boolean;
+  torch_error?: string | null;
   train_seconds: number;
   qlike_model: number;
   qlike_har: number;
-  improvement?: number;
+  /** Paper sign convention: QLIKE(model) - QLIKE(HAR); negative = model better. */
+  qlike_gap?: number;
+  /** 365 for 24/7 crypto, 252 for equities. */
+  annualization?: number;
   forecast: MicroVolForecast;
   model: string;
   note: string;

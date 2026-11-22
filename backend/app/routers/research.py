@@ -134,7 +134,7 @@ MICROVOL_TTL_S = 600.0
 _MICROVOL_CACHE: Dict[tuple[str, int], tuple[float, Dict[str, Any]]] = {}
 
 
-@router.post("/microvol", summary="MicroVol-100: 100-parameter CPU volatility model")
+@router.post("/microvol", summary="MicroVol: compact CPU volatility model (close-only demo)")
 def microvol_forecast(req: MicroVolRequest) -> Dict[str, Any]:
     """Sync route: FastAPI runs it in the threadpool, keeping the event loop free."""
     from app.research.microvol import run_microvol
