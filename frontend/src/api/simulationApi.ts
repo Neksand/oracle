@@ -313,6 +313,77 @@ export async function runBenchmark(symbol = 'SPY', useLstm = true): Promise<Benc
   return r.data;
 }
 
+// ---------------------------------------------------------------------------
+// MicroVol: compact CPU-trained volatility model
+// ---------------------------------------------------------------------------
+export interface MicroVolForecast {
+  /** Contract naming; present when the API returns next-day figures directly. */
+  next_day_vol?: number;
+  next_day_var?: number;
+  var95?: number;
+  /** Current backend naming: daily variance/vol plus annualized equivalents. */
+  vol_daily?: number;
+  variance_daily?: number;
+  vol_annualized?: number;
+  variance_annualized?: number;
+  last_close?: number;
+  horizon_days?: number;
+}
+
+export interface MicroVolSplit {
+  scheme?: string;
+  train?: number;
+  train_days?: number;
+  validation?: number;
+  test?: number;
+  test_days?: number;
+}
+
+/**
+ * The backend may describe the parameter count and the train/test split as
+ * either a scalar/string or a small object, so both shapes are accepted.
+ */
+export interface MicroVolResponse {
+  symbol: string;
+  source: string;
+  n_obs: number;
+  params: number | { count?: number };
+  train_seconds: number;
+  qlike_model: number;
+  qlike_har: number;
+  improvement?: number;
+  forecast: MicroVolForecast;
+  model: string;
+  note: string;
+  split: string | MicroVolSplit | null;
+  cached?: boolean;
+}
+
+export async function runMicroVol(symbol: string, lookbackDays = 750): Promise<MicroVolResponse> {
+  try {
+    const r = await axios.post<MicroVolResponse>(
+      `${API_BASE_URL}/research/microvol`,
+      { symbol, lookback_days: lookbackDays },
+      { headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...authHeaders() }, timeout: 180000 },
+    );
+    return r.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (!error.response) {
+        throw new Error('Backend unreachable — start it on port 8000 and try again.');
+      }
+      const status = error.response.status;
+      const detail = error.response.data?.detail;
+      // Vite's dev proxy answers 500 with an empty body when uvicorn is down.
+      if (!detail && [500, 502, 503, 504].includes(status)) {
+        throw new Error(`Backend not available (HTTP ${status}) — start it on port 8000 and try again.`);
+      }
+      throw new Error(`Volatility model training failed: ${typeof detail === 'string' ? detail : error.message || `HTTP ${status}`}`);
+    }
+    throw error;
+  }
+}
+
 /** Download the .sql dump produced server-side (appendix for the report). */
 export async function exportSqlDump(): Promise<void> {
   const r = await axios.post(`${API_BASE_URL}/db/export`, null,

@@ -10,6 +10,21 @@ Frontend on GitHub Pages, backend (FastAPI) on Render.
 `admin` / `Admin#Oracle26` (role: admin) or `alice` / `Alice#Oracle26` (role: user).
 Both are seeded automatically on first boot.
 
+## MicroVol Studio — 100-parameter CPU volatility model
+
+The `MicroVol` tab trains a 100-parameter volatility model directly in the browser session:
+19-parameter calendar-HAR backbone + a 2-unit GRU residual, CPU-only, no CUDA.
+
+- Backend: `POST /api/research/microvol` with `{"symbol": "SPY", "lookback_days": 750}`.
+- Frontend: `frontend/src/components/UI/MicroVolPanel.tsx`.
+- Model: `backend/app/research/microvol.py`.
+- Paper benchmark (Table III): 100 parameters, 788x fewer than the 78,785-parameter RCM,
+  non-inferior within a 0.02 QLIKE margin, seven-year bootstrap interval excludes zero.
+- Live demo uses a close-only daily-variance target; its absolute QLIKE is not comparable
+  to the paper's full HAR-X benchmark. The panel labels this explicitly.
+
+![MicroVol Studio](docs/microvol-studio.png)
+
 ## Local run
 
 ```bash
