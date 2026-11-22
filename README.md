@@ -7,8 +7,39 @@ Frontend on GitHub Pages, backend (FastAPI) on Render.
 
 ## Demo login
 
-`admin` / `Admin#Oracle26` (role: admin) or `alice` / `Alice#Oracle26` (role: user).
-Both are seeded automatically on first boot.
+The app is seeded with a demo user and an admin user on first boot; use the demo
+credentials shown in the login screen (they are not published here). Sign-in may take
+up to ~30 s on the free Render plan while the API wakes up.
+
+## MicroVol Studio — compact CPU volatility model
+
+The `MicroVol` tab trains a compact volatility model on the server CPU in seconds:
+a 19-parameter calendar-HAR backbone plus a 2-unit GRU residual, CPU-only, no CUDA.
+If PyTorch is unavailable (or training fails) the run reports `fallback: true` and
+serves the 19-parameter calendar-HAR only — it never claims the 100-parameter model.
+
+- Backend: `POST /api/research/microvol` with `{"symbol": "SPY", "lookback_days": 750}`.
+- Frontend: `frontend/src/components/UI/MicroVolPanel.tsx`.
+- Model: `backend/app/research/microvol.py`.
+
+### Paper protocol vs live demo
+
+Two different things share the tab; the UI keeps them in separate cards:
+
+- **Paper protocol (static, Table III).** Flat H=4 calendar residual, 116 parameters —
+  679× fewer than the 78,785-parameter RCM. BTC/ETH/SOL asset-mean QLIKE gaps vs RCM at
+  H=4: 5-year −0.0068 [−0.0299, +0.0117], 7-year −0.0111 [−0.0370, +0.0084], disjoint
+  −0.0431 [−0.1243, +0.0196]; SPY +0.0366 (RCM better). Every crypto date-clustered 95%
+  interval includes zero, i.e. parity at 679× compression, not dominance. TSR-100
+  (100 parameters, 788×) is exploratory, not confirmatory. These numbers are sourced
+  constants, not a live run.
+- **Live demo.** Trains TSR-style m3 + GRU on the requested asset from 750 daily closes
+  with a close-only daily-variance target and a 70/10/20 chronological split. Its
+  absolute QLIKE and gap are not comparable to the paper protocol (demo split ≠ paper
+  split); the panel says so. Gap convention everywhere is QLIKE(model) − QLIKE(baseline),
+  so negative = model better. Crypto is annualised with 365, equities with 252.
+
+![MicroVol Studio](docs/microvol-studio.png)
 
 ## Local run
 

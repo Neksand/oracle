@@ -6,6 +6,7 @@ import { ExportPanel } from './components/UI/ExportPanel';
 import { SavedScenariosPanel } from './components/UI/SavedScenariosPanel';
 import { ResearchPanel } from './components/UI/ResearchPanel';
 import { ApiPanel } from './components/UI/ApiPanel';
+import { MicroVolPanel } from './components/UI/MicroVolPanel';
 import { AuthGate } from './components/Auth/AuthGate';
 import { SceneSetup } from './components/Scene3D/SceneSetup';
 import { ProbabilityCloud } from './components/Scene3D/ProbabilityCloud';
@@ -14,13 +15,14 @@ import { DistributionHist } from './components/Charts/DistributionHist';
 import { useSimulation } from './hooks/useSimulation';
 import { logout } from './api/simulationApi';
 import { ViewMode } from './types';
-import { Compass, AlertCircle, Loader2, Box, LineChart as LineIcon, BarChart3, Braces, FlaskConical, Activity, LogOut, UserRound } from 'lucide-react';
+import { Compass, AlertCircle, Loader2, Box, LineChart as LineIcon, BarChart3, Braces, FlaskConical, Activity, LogOut, UserRound, Cpu } from 'lucide-react';
 
-type AppTab = 'simulator' | 'research' | 'api';
+type AppTab = 'simulator' | 'research' | 'api' | 'microvol';
 
 const APP_TABS: { id: AppTab; label: string; icon: typeof Box; hint: string }[] = [
   { id: 'simulator', label: 'Simulator', icon: Activity, hint: 'GBM scenario engine' },
   { id: 'research', label: 'Models', icon: FlaskConical, hint: 'Volatility model comparison' },
+  { id: 'microvol', label: 'MicroVol', icon: Cpu, hint: 'Train the 100-parameter CPU model' },
   { id: 'api', label: 'API', icon: Braces, hint: 'Programmatic access with API keys' },
 ];
 
@@ -30,7 +32,7 @@ export const App: React.FC = () => {
   const { loading, error, data, quote, history, marketLoading } = sim;
   const [view, setView] = useState<ViewMode>('fan2d');
   const [tab, setTab] = useState<AppTab>(
-    () => ((['simulator', 'research', 'api'] as const)
+    () => ((['simulator', 'research', 'api', 'microvol'] as const)
         .includes((new URLSearchParams(window.location.search).get('tab') ?? '') as AppTab)
       ? ((new URLSearchParams(window.location.search).get('tab') ?? 'simulator') as AppTab)
       : 'simulator'),
@@ -88,10 +90,10 @@ export const App: React.FC = () => {
         {/* App-level tabs (Assignment 3 screens) */}
         <div className="absolute top-4 left-6 z-10 flex items-center gap-1 bg-zinc-900/90 backdrop-blur-md rounded-lg border border-zinc-800 p-1" role="tablist" aria-label="App sections">
           {APP_TABS.map((t) => (
-            <button key={t.id} role="tab" aria-selected={tab === t.id} title={t.hint}
+            <button key={t.id} role="tab" aria-selected={tab === t.id} aria-label={t.label} title={t.hint}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs ${tab === t.id ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}>
-              <t.icon className="w-4 h-4" />{t.label}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs ${tab === t.id ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}>
+              <t.icon className="w-4 h-4" /><span className="hidden sm:inline">{t.label}</span>
             </button>
           ))}
         </div>
@@ -109,6 +111,7 @@ export const App: React.FC = () => {
         {tab !== 'simulator' && (
           <div className="flex-1 overflow-y-auto pt-20 px-6 pb-8">
             {tab === 'research' && <ResearchPanel />}
+            {tab === 'microvol' && <MicroVolPanel />}
             {tab === 'api' && <ApiPanel />}
           </div>
         )}
@@ -140,7 +143,7 @@ export const App: React.FC = () => {
         </div>
         )}
 
-        {error && (
+        {error && tab === 'simulator' && (
           <div className="absolute top-16 left-6 right-6 z-30 flex items-center gap-3 p-4 bg-zinc-900/95 border border-rose-900/60 rounded-xl text-rose-200 text-xs">
             <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
             <div className="flex-1">

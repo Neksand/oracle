@@ -125,6 +125,39 @@ async def research_benchmark(req: BenchmarkRequest) -> Dict[str, Any]:
     }
 
 
+class MicroVolRequest(BaseModel):
+    symbol: str = Field(default="SPY", max_length=24)
+    lookback_days: int = Field(default=750, ge=100, le=1250)
+
+
+MICROVOL_TTL_S = 600.0
+_MICROVOL_CACHE: Dict[tuple[str, int], tuple[float, Dict[str, Any]]] = {}
+
+
+@router.post("/microvol", summary="MicroVol: compact CPU volatility model (close-only demo)")
+def microvol_forecast(req: MicroVolRequest) -> Dict[str, Any]:
+    """Sync route: FastAPI runs it in the threadpool, keeping the event loop free."""
+    from app.research.microvol import run_microvol
+
+    key = (req.symbol.upper(), req.lookback_days)
+    now = time.time()
+    hit = _MICROVOL_CACHE.get(key)
+    if hit is not None and now - hit[0] < MICROVOL_TTL_S:
+        return {**hit[1], "cached": True}
+
+    try:
+        result = run_microvol(req.symbol, req.lookback_days)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"MicroVol failed: {exc}") from exc
+
+    if len(_MICROVOL_CACHE) >= 32:
+        _MICROVOL_CACHE.clear()
+    _MICROVOL_CACHE[key] = (now, result)
+    return {**result, "cached": False}
+
+
 @router.get("/health", summary="Research subsystem status")
 async def research_health():
     torch_ok = False
