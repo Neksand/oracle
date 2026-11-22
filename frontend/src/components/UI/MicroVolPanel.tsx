@@ -13,7 +13,6 @@ const PAPER = {
   params: 116,
   baselineParams: '78,785',
   ratio: '679×',
-  margin: '0.02 QLIKE',
   ci: 'includes 0',
 } as const;
 
@@ -113,10 +112,9 @@ const PaperProtocolCard: React.FC = () => (
     </div>
 
     <p className="mt-2.5 text-[10px] leading-relaxed text-zinc-600">
-      Every crypto interval includes zero: this is parity at {PAPER.ratio} compression, not
-      dominance. TSR-100 (100 parameters, 788×) was explored after the ladder and is
-      <span className="text-amber-400/90"> exploratory</span>, not confirmatory. SPY is the one
-      window where RCM remains better. {PAPER.margin} is the paper's non-inferiority margin.
+      Every crypto interval includes zero: parity at {PAPER.ratio} compression, not dominance.
+      TSR-100 (100 parameters, 788×) is <span className="text-amber-400/90">exploratory</span>,
+      not confirmatory. SPY is the one window where RCM remains better.
     </p>
   </section>
 );
@@ -223,7 +221,7 @@ export const MicroVolPanel: React.FC = () => {
         <p id="microvol-asset-hint" className="mt-2 text-[11px] text-zinc-500">
           Live demo: trains on the server CPU in seconds from {LOOKBACK_DAYS} daily closes and
           scores the next-day variance out of sample against HAR. It does not reproduce the paper
-          protocol below.
+          protocol above.
         </p>
       </section>
 
@@ -271,8 +269,8 @@ export const MicroVolPanel: React.FC = () => {
                 <span className="font-semibold text-rose-300">Fallback run — no sequence model trained.</span>{' '}
                 torch {data.torch_available === false ? 'is unavailable or the GRU failed to train' : 'fallback'}
                 {data.torch_error ? ` (${data.torch_error})` : ''}. These figures are the{' '}
-                19-parameter m3 calendar-HAR backbone only; the 100-parameter MicroVol claim does
-                not apply to this run.
+                19-parameter m3 calendar-HAR backbone only; the 100-parameter live-demo claim does
+                not apply to this fallback run.
               </div>
             )}
 
@@ -361,7 +359,7 @@ export const MicroVolPanel: React.FC = () => {
                 ? 'a 19-parameter linear calendar-HAR still prices the next day on a server CPU, but no sequence model was trained in this run.'
                 : `${params ?? 'Compact'}-parameter model trained in ${decimal(data.train_seconds, 2)} s on a server CPU — no GPU — so the same forecast runs anywhere the API does.`}
               {gap != null && gap > 0 && !fallback
-                ? ' On this demo split the model did not beat HAR; the paper claim is non-inferiority within a 0.02 QLIKE margin on the full HAR-X target, not this close-only demo.'
+                ? ' On this demo split the model did not beat HAR. The paper result is parity, with date-clustered intervals that include zero; this close-only demo is not comparable.'
                 : ''}
             </p>
 
